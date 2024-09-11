@@ -4,7 +4,7 @@ use std::fmt::Display;
 use std::io;
 
 #[derive(Debug)]
-struct HttpRequest {
+pub struct HttpRequest {
     method: Method,
     resource: Resource,
     version: Version,
@@ -13,7 +13,7 @@ struct HttpRequest {
 }
 
 impl HttpRequest {
-    fn new(request: &str) -> io::Result<HttpRequest> {
+    pub fn new(request: &str) -> io::Result<HttpRequest> {
         let method: Method = Method::new(request) ;
         let resource: Resource = if let Some(resource) = Resource::new(request){
             resource

@@ -8,6 +8,8 @@ use std::{
     }
 };
 
+use simple_http::http::request;
+
 fn create_socket() -> SocketAddr{
     SocketAddr::new(std::net::IpAddr::V4(Ipv4Addr::LOCALHOST), 5500)
 }
@@ -16,15 +18,12 @@ fn handle_client(stream: &mut TcpStream) -> io::Result<()>{
     let mut buffer = [0; 1024];
     stream.read(&mut buffer)?;
 
-    let valid_response = "HTTP/2 200\ncontent-type: text/html\nvary: Accept-Encoding\r\n\r\n\
-    <html>
-    <body>
-    <h1>Hello World</h1>
-    </body>
-    </html>";
-    println!("Http response\n{}", valid_response);
+    let buf_str = String::from_utf8_lossy(&buffer);
+    let request = request::HttpRequest::new(&buf_str)?;
 
-    stream.write(&mut valid_response.as_bytes())?;
+    println!("{:?}", request);
+    println!("{:?}", &request.request_body);
+    stream.write(&mut buffer)?;
     stream.flush()?;
     Ok(())
 }
